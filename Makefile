@@ -13,3 +13,7 @@ $(TARGET): $(OBJ)
 
 obj/%.o : src/%.c
 	gcc -c $< -o $@ -Iinclude
+
+test: $(TARGET)
+	./bin/final file.db
+
