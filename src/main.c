@@ -1,51 +1,45 @@
 #include <stdio.h>
-#include <fcntl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/uio.h>
-#include <unistd.h>
+#include <stdbool.h>
+#include <getopt.h>
+#include <stdlib.h>
 
-struct database_header_t {
-  unsigned short version;
-  unsigned short employees;
-  unsigned int filesize;
-};
+// #include "common.h"
+#include "file.h"
+#include "parse.h"
+
+void print_usage(char *argv[]) {
+  printf("Usage: %s -n -f <database file>\n", argv[0]);
+  printf("\t-n - crate database file\n");
+  printf("\t-f - (required) path to database file\n");
+  return;
+}
 
 int main(int argc, char *argv[]) {
-  struct database_header_t head = {0};
-  struct stat dbStat = {0};
+  char *filepath = NULL;
+  bool newfile = false;
+  int c;
 
-  if (argc != 2) {
-    printf("Usage: %s <filename>\n", argv[0]);
+  while ((c = getopt(argc, argv, "nf:")) != -1) {
+    switch (c) {
+      case 'n':
+        newfile = true;
+        break;
+      case 'f':
+        filepath = optarg;
+        break;
+      case '?':
+        print_usage(argv);
+        break;
+      default:
+        return -1;
+    }
   }
 
-  int fd = open(argv[1], O_RDWR | O_CREAT, 0644);
-  if (fd == -1) {
-    perror("open");
-    return -1;
+  if (filepath == NULL) {
+    printf("Filepath is a required argument.\n");
+    print_usage(argv);
+    return 0;
   }
-
-  if (read(fd, &head, sizeof(head)) != sizeof(head)) {
-    perror("read");
-    close(fd);
-    return -1;
-  }
-
-  printf("DB Ver: %u\n", head.version);
-  printf("DB Employees: %u\n", head.employees);
-  printf("DB Filesize: %u\n", head.filesize);
-
-  if (fstat(fd, &dbStat) < 0) {
-    perror("fstat");
-    return -1;
-  }
-
-  if (dbStat.st_size != head.filesize) {
-    printf("Incorrect filesize!\n");
-    return -1;
-  }
-
-  printf("DB Filesize by stat: %llu\n", dbStat.st_size);
 
   return 0;
 }
