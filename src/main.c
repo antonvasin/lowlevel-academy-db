@@ -11,6 +11,7 @@ void print_usage(char *argv[]) {
   printf("Usage: %s -n -f <database file>\n", argv[0]);
   printf("\t-n - crate database file\n");
   printf("\t-f - (required) path to database file\n");
+  printf("\t-l - list records\n");
   return;
 }
 
@@ -18,12 +19,13 @@ int main(int argc, char *argv[]) {
   char *filepath = NULL;
   char *addstring = NULL;
   bool newfile = false;
+  bool list = false;
   int c;
   int dbfd = -1;
   struct dbheader_t *dbhdr_t = NULL;
   struct employee_t *employees = NULL;
 
-  while ((c = getopt(argc, argv, "nf:a:")) != -1) {
+  while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
     switch (c) {
       case 'n':
         newfile = true;
@@ -33,6 +35,9 @@ int main(int argc, char *argv[]) {
         break;
       case 'a':
         addstring = optarg;
+        break;
+      case 'l':
+        list = true;
         break;
       case '?':
         print_usage(argv);
@@ -83,6 +88,10 @@ int main(int argc, char *argv[]) {
     dbhdr_t->count++;
     employees = realloc(employees, dbhdr_t->count*(sizeof(struct employee_t)));
     add_employee(dbhdr_t, employees, addstring);
+  }
+
+  if (list) {
+    list_employees(dbhdr_t, employees);
   }
 
   output_file(dbfd, dbhdr_t, employees);

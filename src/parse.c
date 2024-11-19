@@ -10,9 +10,15 @@
 #include "common.h"
 #include "parse.h"
 
-// void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
-//
-// }
+void list_employees(struct dbheader_t *dbhdr, struct employee_t *employees) {
+  int i = 0;
+  for (; i < dbhdr->count; i++) {
+    printf("Employee %d:\n", i);
+    printf("\tname - %s\n", employees[i].name);
+    printf("\taddress - %s\n", employees[i].address);
+    printf("\thours - %d\n", employees[i].hours);
+  }
+}
 
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring) {
   char *name = strtok(addstring, ",");
