@@ -11,13 +11,17 @@ void print_usage(char *argv[]) {
   printf("Usage: %s -n -f <database file>\n", argv[0]);
   printf("\t-n - crate database file\n");
   printf("\t-f - (required) path to database file\n");
+  printf("\t-a - add record to database\n");
   printf("\t-l - list records\n");
+  printf("\t-r - remove record by employee name\n");
+  // printf("\t-u - update employee's hours\n");
   return;
 }
 
 int main(int argc, char *argv[]) {
   char *filepath = NULL;
   char *addstring = NULL;
+  char *removestring = NULL;
   bool newfile = false;
   bool list = false;
   int c;
@@ -25,7 +29,7 @@ int main(int argc, char *argv[]) {
   struct dbheader_t *dbhdr_t = NULL;
   struct employee_t *employees = NULL;
 
-  while ((c = getopt(argc, argv, "nf:a:l")) != -1) {
+  while ((c = getopt(argc, argv, "nf:a:lr:")) != -1) {
     switch (c) {
       case 'n':
         newfile = true;
@@ -38,6 +42,9 @@ int main(int argc, char *argv[]) {
         break;
       case 'l':
         list = true;
+        break;
+      case 'r':
+        removestring = optarg;
         break;
       case '?':
         print_usage(argv);
@@ -88,6 +95,14 @@ int main(int argc, char *argv[]) {
     dbhdr_t->count++;
     employees = realloc(employees, dbhdr_t->count*(sizeof(struct employee_t)));
     add_employee(dbhdr_t, employees, addstring);
+  }
+
+  if (removestring) {
+    if (remove_employee(dbhdr_t, employees, removestring) == STATUS_SUCCESS) {
+      printf("Removed employee with name '%s'\n", removestring);
+    } else {
+      printf("Failed to remove employee with name '%s'\n", removestring);
+    }
   }
 
   if (list) {

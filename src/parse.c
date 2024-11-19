@@ -31,6 +31,32 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
   return STATUS_SUCCESS;
 }
 
+int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *removestring) {
+  int i = 0;
+  for (; i < dbhdr->count; i++) {
+    if (strcmp(employees[i].name, removestring) == 0) break;
+  }
+
+  if (i == dbhdr->count) {
+    return STATUS_ERROR;
+  }
+
+  dbhdr->count--;
+  for (int j = i; j < dbhdr->count; j++) {
+    employees[j] = employees[j+1];
+  }
+
+  struct employee_t *empl_tmp = realloc(employees, dbhdr->count);
+  if (empl_tmp == NULL) {
+    printf("realloc failed\n");
+    return STATUS_ERROR;
+  }
+
+  employees = empl_tmp;
+
+  return STATUS_SUCCESS;
+}
+
 int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut) {
   if (fd < 0) {
     printf("Bad descriptor from the user\n");
