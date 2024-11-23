@@ -38,6 +38,7 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char
   }
 
   if (i == dbhdr->count) {
+    printf("Can't find employee with name '%s'\n", removestring);
     return STATUS_ERROR;
   }
 
@@ -53,6 +54,23 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char
   }
 
   employees = empl_tmp;
+
+  return STATUS_SUCCESS;
+}
+
+int update_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *updatestring) {
+  char *name = strtok(updatestring, ",");
+  char *hours = strtok(NULL, ",");
+  int i = 0;
+  for (; i < dbhdr->count; i++) {
+    if (strcmp(employees[i].name, name) == 0) break;
+  }
+
+  if (i == dbhdr->count) {
+    return STATUS_ERROR;
+  }
+
+  employees[i].hours = atoi(hours);
 
   return STATUS_SUCCESS;
 }
