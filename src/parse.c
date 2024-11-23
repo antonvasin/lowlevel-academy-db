@@ -38,7 +38,7 @@ int remove_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char
   }
 
   if (i == dbhdr->count) {
-    printf("Can't find employee with name '%s'\n", removestring);
+    printf("Can't find employee with name \"%s\"\n", removestring);
     return STATUS_ERROR;
   }
 
@@ -121,6 +121,8 @@ int output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees) 
     employees[i].hours = htonl(employees[i].hours);
     write(fd, &employees[i], sizeof(struct employee_t));
   }
+
+  ftruncate(fd, sizeof(struct dbheader_t) + realcount * sizeof(struct employee_t));
 
   return STATUS_SUCCESS;
 }

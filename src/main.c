@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (removestring) {
-     remove_employee(dbhdr, employees, removestring);
+    remove_employee(dbhdr, employees, removestring);
   }
 
   if (list) {
