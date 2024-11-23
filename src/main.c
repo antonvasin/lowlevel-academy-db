@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   bool list = false;
   int c;
   int dbfd = -1;
-  struct dbheader_t *dbhdr_t = NULL;
+  struct dbheader_t *dbhdr = NULL;
   struct employee_t *employees = NULL;
 
   while ((c = getopt(argc, argv, "nf:a:lr:u:")) != -1) {
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
       return -1;
     }
 
-    if (create_db_header(dbfd, &dbhdr_t) == STATUS_ERROR) {
+    if (create_db_header(dbfd, &dbhdr) == STATUS_ERROR) {
       printf("Failed to create db header\n");
       return -1;
     }
@@ -83,37 +83,37 @@ int main(int argc, char *argv[]) {
       return -1;
     }
 
-    if (validate_db_header(dbfd, &dbhdr_t) == STATUS_ERROR) {
+    if (validate_db_header(dbfd, &dbhdr) == STATUS_ERROR) {
       printf("Failed to validate db file\n");
       return -1;
     }
 
   }
 
-  if (read_employees(dbfd, dbhdr_t, &employees) != STATUS_SUCCESS) {
+  if (read_employees(dbfd, dbhdr, &employees) != STATUS_SUCCESS) {
     printf("Failed to read employees\n");
     return 0;
   }
 
   if (addstring) {
-    dbhdr_t->count++;
-    employees = realloc(employees, dbhdr_t->count*(sizeof(struct employee_t)));
-    add_employee(dbhdr_t, employees, addstring);
+    dbhdr->count++;
+    employees = realloc(employees, dbhdr->count*(sizeof(struct employee_t)));
+    add_employee(dbhdr, employees, addstring);
   }
 
   if (updatestring) {
-    update_employee(dbhdr_t, employees, updatestring);
+    update_employee(dbhdr, employees, updatestring);
   }
 
   if (removestring) {
-     remove_employee(dbhdr_t, employees, removestring);
+     remove_employee(dbhdr, employees, removestring);
   }
 
   if (list) {
-    list_employees(dbhdr_t, employees);
+    list_employees(dbhdr, employees);
   }
 
-  output_file(dbfd, dbhdr_t, employees);
+  output_file(dbfd, dbhdr, employees);
 
   return 0;
 }

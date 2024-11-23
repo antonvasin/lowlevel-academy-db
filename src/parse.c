@@ -24,7 +24,7 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
   char *name = strtok(addstring, ",");
   char *address = strtok(NULL, ",");
   char *hours = strtok(NULL, ",");
-  // printf("%s %s %s", name, addr, hours);
+  printf("%s %s %s\n", name, address, hours);
   strncpy(employees[dbhdr->count-1].name, name, sizeof(employees[dbhdr->count-1].name));
   strncpy(employees[dbhdr->count-1].address, address, sizeof(employees[dbhdr->count-1].address));
   employees[dbhdr->count-1].hours = atoi(hours);
@@ -84,7 +84,7 @@ int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employe
   int count = dbhdr->count;
 
   struct employee_t *employees = calloc(count, sizeof(struct employee_t));
-  if (employees == NULL) {
+	if (employees == (void*)-1) {
     printf("malloc failed\n");
     return STATUS_ERROR;
   }
@@ -92,7 +92,7 @@ int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employe
   read(fd, employees, count * sizeof(struct employee_t));
   int i = 0;
   for (; i < count; i++) {
-    employees[i].hours = ntohs(employees[i].hours);
+    employees[i].hours = ntohl(employees[i].hours);
   }
 
   *employeesOut = employees;
